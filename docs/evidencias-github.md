@@ -46,20 +46,44 @@ La propuesta fue desarrollada inicialmente en la rama `propuesta-mauricio` y pos
 
 ### Aportaciones realizadas
 
-- Desarrollo de una propuesta individual de mejora.
-- Aplicación de principios SOLID al diseño de HomeCrop IoT.
-- Elaboración de un diagrama de clases de la arquitectura propuesta.
+- Desarrollo de una propuesta individual de mejora basada en los principios SOLID.
+- Análisis de los problemas del diseño original relacionados con responsabilidades múltiples, acoplamiento y dependencias.
+- Separación del sistema en clases especializadas.
+- Incorporación de interfaces para sensores, control de riego, almacenamiento y notificaciones.
+- Elaboración del diagrama de clases de la arquitectura propuesta.
 - Registro de sus cambios mediante commits individuales.
 
 ### Propuesta desarrollada
 
-La propuesta de Diana reorganiza el sistema aplicando principios SOLID con el objetivo de separar responsabilidades, reducir dependencias y facilitar futuras modificaciones.
+La propuesta de Diana reorganiza HomeCrop IoT aplicando los cinco principios SOLID.
+
+El diseño mantiene componentes especializados como:
+
+- `HomeCropController`
+- `SensorService`
+- `RiegoService`
+- `MedicionRepository`
+- `NotificacionService`
+- `DashboardService`
+
+La principal diferencia de esta propuesta es el uso de abstracciones e interfaces como:
+
+- `ISensor`
+- `IControlRiego`
+- `IMedicionRepository`
+- `INotificador`
+
+Estas interfaces permiten utilizar diferentes implementaciones sin modificar directamente la lógica principal del sistema.
+
+Por ejemplo, distintos sensores pueden implementar `ISensor`, mientras que diferentes mecanismos de notificación, como correo o aplicación, pueden implementar `INotificador`.
+
+Con esta organización se busca reducir el acoplamiento, facilitar las pruebas, permitir la sustitución de componentes y preparar el sistema para futuras ampliaciones.
 
 ### Pull Request
 
 Pull Request #2: `Propuesta de mejora del diseño de software - Diana`
 
-La propuesta fue desarrollada en la rama `propuesta-diana` e integrada posteriormente a `main`.
+La propuesta fue desarrollada en la rama `propuesta-diana` y posteriormente integrada a `main`.
 
 ---
 
@@ -71,30 +95,52 @@ La propuesta fue desarrollada en la rama `propuesta-diana` e integrada posterior
 
 ### Aportaciones realizadas
 
-- Desarrollo de una propuesta individual de mejora.
-- Aplicación del patrón Observer.
-- Propuesta de una arquitectura basada en eventos.
-- Elaboración del diagrama de clases utilizando Mermaid.
+- Desarrollo de una propuesta individual basada en el patrón Observer.
+- Diseño de una arquitectura orientada a eventos.
+- Separación de los componentes encargados del monitoreo, riego, alertas y dashboard.
+- Incorporación de un administrador de eventos para gestionar suscripciones y notificaciones.
+- Elaboración del diagrama de clases mediante Mermaid.
 - Registro de sus cambios mediante commits individuales.
 
 ### Propuesta desarrollada
 
-La propuesta de Maria utiliza el patrón Observer y una arquitectura basada en eventos para permitir que diferentes componentes reaccionen ante cambios del sistema sin depender fuertemente unos de otros.
+La propuesta de Maria utiliza el patrón de diseño Observer y una arquitectura basada en eventos.
+
+Los principales componentes son:
+
+- `SensorService`
+- `EventManager`
+- `EventoMedicion`
+- `Observer`
+- `RiegoObserver`
+- `AlertaObserver`
+- `DashboardObserver`
+- `ControlRiego`
+
+En esta propuesta, `SensorService` obtiene las mediciones y genera eventos mediante `EventManager`.
+
+Los diferentes observadores se suscriben a esos eventos y reaccionan de forma independiente:
+
+- `RiegoObserver` evalúa si es necesario realizar el riego.
+- `AlertaObserver` determina si debe generarse una alerta.
+- `DashboardObserver` actualiza la información mostrada al usuario.
+
+Esta estructura busca reducir el acoplamiento, ya que el componente encargado de obtener las mediciones no necesita conocer directamente todos los módulos que utilizarán la información.
+
+También facilita incorporar nuevos observadores en el futuro sin modificar directamente el módulo que genera las mediciones.
 
 ### Pull Request
 
 Pull Request #3: `Propuesta de mejora del diseño de software - Maria`
 
-Los archivos y commits de la propuesta fueron desarrollados por la cuenta de Maria y posteriormente integrados a `main`.
+La propuesta fue desarrollada en la rama `propuesta-maria` mediante los commits correspondientes y posteriormente integrada a `main`.
 
----
+## Resumen de las propuestas individuales
 
-## Resumen de las propuestas
+| Integrante | Enfoque principal | Característica distintiva |
+|---|---|---|
+| Mauricio | Servicios especializados y controlador | Divide las responsabilidades en servicios coordinados por `HomeCropController` |
+| Diana | Principios SOLID | Utiliza interfaces y dependencias hacia abstracciones para facilitar sustitución y extensión |
+| Maria | Observer y arquitectura basada en eventos | Los componentes reaccionan de forma independiente a eventos distribuidos por `EventManager` |
 
-| Integrante | Enfoque principal |
-|---|---|
-| Mauricio | Separación de responsabilidades mediante servicios especializados y controlador |
-| Diana | Aplicación de principios SOLID |
-| Maria | Patrón Observer y arquitectura basada en eventos |
-
-Las tres propuestas presentan diferentes formas de mejorar la organización del software de HomeCrop IoT y facilitar su mantenimiento y evolución.
+Las tres propuestas buscan resolver el problema de concentración de responsabilidades presente en el diseño inicial de `HomeCropSystem`, pero utilizan enfoques diferentes para organizar y relacionar los componentes.
